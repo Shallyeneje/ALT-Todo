@@ -8,7 +8,7 @@ import Welcome from './components/welcome';
 import Navbar from './components/navbar';
 import TaskPlanner from './pages/taskplanner';
 import CreateTask from './pages/createTask';
-import CreateTaskCategory from './pages/createTaskCategory';
+// import CreateTaskCategory from './pages/createTaskCategory';
 import './index.css';
 import TaskDetailPage from './components/taskDetauil';
 
@@ -37,7 +37,6 @@ export default function App() {
         <Route path="*" element={<NotFound />} />
         <Route path="/taskplanner" element={<TaskPlanner />} />
         <Route path="/createTask" element={<CreateTask/>} />
-        <Route path="/createTaskCategory" element={<CreateTaskCategory/>} />
         <Route path="/tasks/:id" element={<TaskDetailPage />} />
       </Routes>
       </>
