@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   useGetTasks,
@@ -11,18 +11,21 @@ import type { Task, TaskPriority, TaskStatus } from "../types/types";
 import TaskForm from "./tasksForm";
 import { useNavigate } from "react-router-dom";
 import PaginationContainer from "./pagination";
+import { Search } from "lucide-react";
 
 export default function TaskPlanner() {
   const [showModal, setShowModal] = useState(false);
   const today = new Date().toISOString().split("T")[0];
   const [selectedDate] = useState<string>(today);
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
-  // const [TasksPerPage, setTasksPerPage] = useState(10);
-  const TasksPerPage = 10; // Remove useState
+  const [TasksPerPage, setTasksPerPage] = useState(10);
+  // const TasksPerPage = useState(10);
 
   const [currentPage, setCurrentPage] = useState(1);
   const deleteTask = useDeleteTask();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  // const Task = Task?.students || [];
 
   // ✅ React Query hooks
   // const { data: tasks = [], isLoading } = useGetTasks();
@@ -32,7 +35,7 @@ export default function TaskPlanner() {
   const createTask = useCreateTask();
   const updateTask = useUpdateTask();
 
-  const allTasks = Array.isArray(tasks) ? tasks : [];
+  // const FilTasks = Array.isArray(tasks) ? tasks : [];
 
   const toggleStatus = (task: Task) => {
     const nextStatus: TaskStatus =
@@ -76,9 +79,20 @@ export default function TaskPlanner() {
     setSelectedTaskIds([]);
     toast("🗑️ Selected task(s) deleted");
   };
+  const filteredTasks = tasks.filter((task: Task) => {
+    const fullName = `${task.name} `.toLowerCase();
+    return (
+      fullName.includes(searchQuery.toLowerCase()) ||
+      task.id.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
+
   const indexOfLastTask = currentPage * TasksPerPage;
   const indexOfFirstTask = indexOfLastTask - TasksPerPage;
-  const currentTasks = allTasks.slice(indexOfFirstTask, indexOfLastTask);
+  const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentPage]);
 
   return (
     <div className="min-h-screen text-white font-sans p-4">
@@ -88,7 +102,10 @@ export default function TaskPlanner() {
           <div className="text-[#0f172a] text-lg">
             <div className="text-left">
               <h3 className="text-xl ">Today</h3>
-              <p className="text-xs text-gray-400 ">{allTasks.length} Tasks</p>
+              {/* <p className="text-xs text-gray-400 ">{tasks.length} Tasks</p> */}
+              <p className="text-xs text-gray-400 ">
+                {filteredTasks.length} of {tasks.length} Tasks
+              </p>
             </div>
           </div>
           <h2 className="text-lg font-semibold text-[#0f172a]">
@@ -118,6 +135,17 @@ export default function TaskPlanner() {
       <div className="space-y-[20px]">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold">My Tasks</h3>
+
+          <div className="relative max-w-md min-w-[100px] ml-[20px] ">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[20px] w-[20px] text-gray-500 dark:text-gray-400" />
+            <input
+              type="text"
+              className="w-full px-[20px] py-[8px] rounded-md border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:placeholder-gray-400 placeholder-gray-500"
+              placeholder="Search Student by name, ID"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
 
           {/* Delete selected button moved to top */}
           {selectedTaskIds.length > 0 && (
@@ -223,17 +251,34 @@ export default function TaskPlanner() {
         ) : (
           <p className="text-gray-400">No tasks for this date.</p>
         )}
-        <div className="flex items-center gap-4">
-          <span className="flex items-center whitespace-nowrap">
-            page {currentPage} of {Math.ceil(allTasks.length / TasksPerPage)}
-          </span>
-          <PaginationContainer
-  totalItems={allTasks.length}
-  itemsPerPage={TasksPerPage}
-  currentPage={currentPage}
-  onPageChange={setCurrentPage}
-/>
 
+        <div className="flex justify-between items-center mt-4 text-sm text-gray-600 dark:text-gray-400">
+          {/* Rows per page selection */}
+          <div className="flex items-center gap-2">
+            <span>rows per page</span>
+            <select
+              value={TasksPerPage}
+              onChange={(e) => setTasksPerPage(Number(e.target.value))}
+              className="border border-gray-300 rounded px-2 py-1 focus:outline-none"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="flex items-center whitespace-nowrap">
+              page {currentPage} of{" "}
+              {Math.ceil(filteredTasks.length / TasksPerPage)}
+            </span>
+            <PaginationContainer
+              totalItems={filteredTasks.length}
+              itemsPerPage={TasksPerPage}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         </div>
       </div>
 
