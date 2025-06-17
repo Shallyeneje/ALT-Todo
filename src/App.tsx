@@ -1,10 +1,17 @@
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import Home from './pages/Home';
 import TodoDetail from './pages/TodoDetail';
 import NotFound from './pages/NotFound';
 import Welcome from './components/welcome';
+import Navbar from './components/navbar';
+import TaskPlanner from './pages/taskplanner';
+import CreateTask from './pages/createTask';
+import CreateTaskCategory from './pages/createTaskCategory';
+import './index.css';
+import TaskDetailPage from './components/taskDetauil';
+
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -12,7 +19,7 @@ export default function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowWelcome(false);
-    }, 20000); // 20 seconds
+    }, 2000); // 20 seconds
 
     return () => clearTimeout(timer); // cleanup
   }, []);
@@ -22,13 +29,19 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
+    <>
+    <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/todos/:id" element={<TodoDetail />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/taskplanner" element={<TaskPlanner />} />
+        <Route path="/createTask" element={<CreateTask/>} />
+        <Route path="/createTaskCategory" element={<CreateTaskCategory/>} />
+        <Route path="/tasks/:id" element={<TaskDetailPage />} />
       </Routes>
-    </BrowserRouter>
+      </>
+    
   );
 }
 
