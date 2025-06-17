@@ -7,7 +7,7 @@ import {
   useUpdateTask,
   useDeleteTask,
 } from "../api/data";
-import type { Task, TaskPriority, TaskStatus } from "../types/types";
+import type { Task, TaskStatus } from "../types/types";
 import TaskForm from "./tasksForm";
 import { useNavigate } from "react-router-dom";
 import PaginationContainer from "./pagination";
@@ -54,22 +54,22 @@ export default function TaskPlanner() {
     }
   };
 
-  const togglePriority = (task: Task) => {
-    const nextPriority: TaskPriority =
-      task.priority === "LOW"
-        ? "MEDIUM"
-        : task.priority === "MEDIUM"
-        ? "HIGH"
-        : "LOW";
+  // const togglePriority = (task: Task) => {
+  //   const nextPriority: TaskPriority =
+  //     task.priority === "LOW"
+  //       ? "MEDIUM"
+  //       : task.priority === "MEDIUM"
+  //       ? "HIGH"
+  //       : "LOW";
 
-    if (nextPriority === "HIGH") {
-      toast("This task needs immediate attention");
-    }
+  //   if (nextPriority === "HIGH") {
+  //     toast("This task needs immediate attention");
+  //   }
 
-    if (task.id) {
-      updateTask.mutate({ id: task.id, updates: { priority: nextPriority } });
-    }
-  };
+  //   if (task.id) {
+  //     updateTask.mutate({ id: task.id, updates: { priority: nextPriority } });
+  //   }
+  // };
 
   const handleDeleteSelected = () => {
     selectedTaskIds.forEach((id) => {
@@ -101,7 +101,9 @@ export default function TaskPlanner() {
         <div className="flex justify-between items-center">
           <div className="text-[#0f172a] text-lg">
             <div className="text-left">
-              <h3 className="text-xl ">Today</h3>
+              <h3 className="text-xl ">
+                <strong>Today</strong>
+              </h3>
               {/* <p className="text-xs text-gray-400 ">{tasks.length} Tasks</p> */}
               <p className="text-xs text-gray-400 ">
                 {filteredTasks.length} of {tasks.length} Tasks
@@ -121,7 +123,7 @@ export default function TaskPlanner() {
             {/* <Clock /> */}
             <Button
               onClick={() => setShowModal(true)}
-              className="bg-[#cbd5e1] text-[#0f172a] text-sm px-[15px] py-[8px] rounded-[8px] font-medium border border-[#0f172a]"
+              className="text-[#ffffff] bg-[#0f172a] text-sm px-[15px] py-[8px] rounded-[8px] font-medium border border-[#0f172a]"
             >
               Add New
             </Button>
@@ -136,7 +138,7 @@ export default function TaskPlanner() {
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold">My Tasks</h3>
 
-          <div className="relative max-w-md min-w-[100px] ml-[20px] ">
+          <div className="relative max-w-md min-w-[100px] mr-[35px] p-[10px] ">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[20px] w-[20px] text-gray-500 dark:text-gray-400" />
             <input
               type="text"
@@ -150,7 +152,7 @@ export default function TaskPlanner() {
           {/* Delete selected button moved to top */}
           {selectedTaskIds.length > 0 && (
             <Button
-              className="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded"
+              className="bg-[#F87171] text-white hover:bg-red-700 px-[15px] py-[8px] rounded-[5px]"
               onClick={() => {
                 const confirmDelete = window.confirm(
                   "Are you sure you want to delete selected tasks?"
@@ -172,13 +174,76 @@ export default function TaskPlanner() {
             const isSelected = selectedTaskIds.includes(task.id || "");
 
             return (
+              // <div
+              //   key={task.id || idx}
+              //   className={`bg-[#cbd5e1] text-[#0f172a] rounded-[10px] p-[10px] flex justify-between items-start cursor-pointer hover:bg-[#bcd0df] ${
+              //     isSelected ? "ring-2 ring-red-500" : ""
+              //   }`}
+              // >
+              //   {/* Select checkbox */}
+              //   <input
+              //     type="checkbox"
+              //     checked={isSelected}
+              //     onClick={(e) => e.stopPropagation()}
+              //     onChange={(e) => {
+              //       const id = task.id!;
+              //       setSelectedTaskIds((prev) =>
+              //         e.target.checked
+              //           ? [...prev, id]
+              //           : prev.filter((taskId) => taskId !== id)
+              //       );
+              //     }}
+              //     className="accent-red-500 w-5 h-5 mt-0 mr-3"
+              //   />
+
+              //   {/* Task name + description */}
+              //   <div
+              //     className="flex-1"
+              //     onClick={() => navigate(`/tasks/${task.id}`)}
+              //   >
+              //     <h4 className="text-base leading-none">{task.name}</h4>
+              //     {task.description && (
+              //       <p className="text-sm text-gray-600 leading-none">{task.description}</p>
+              //     )}
+              //   </div>
+
+              //   {/* Status toggle */}
+              //   <input
+              //     type="checkbox"
+              //     checked={task.status === "DONE"}
+              //     ref={(el) => {
+              //       if (el) el.indeterminate = task.status === "IN_PROGRESS";
+              //     }}
+              //     onClick={(e) => e.stopPropagation()}
+              //     onChange={() => toggleStatus(task)}
+              //     className="accent-blue-600 w-5 h-5 mt-1 ml-2"
+              //   />
+
+              //   {/* Priority toggle — only editable if task.updated === true */}
+              //   {task.updates ? (
+              //     <input
+              //       type="checkbox"
+              //       checked={task.priority === "HIGH"}
+              //       ref={(el) => {
+              //         if (el) el.indeterminate = task.priority === "MEDIUM";
+              //       }}
+              //       onClick={(e) => e.stopPropagation()}
+              //       onChange={() => togglePriority(task)}
+              //       className="accent-blue-600 w-5 h-5 mt-1 ml-4"
+              //     />
+              //   ) : (
+              //     <span className="text-sm font-semibold text-purple-700 mt-1 ml-4">
+              //       Priority: {task.priority}
+              //     </span>
+              //   )}
+              // </div>
               <div
                 key={task.id || idx}
-                className={`bg-[#cbd5e1] text-[#0f172a] rounded-lg p-[16px] flex justify-between items-start cursor-pointer hover:bg-[#bcd0df] ${
-                  isSelected ? "ring-2 ring-red-500" : ""
+                className={`bg-[#cbd5e1] text-[#0f172a] border rounded-[10px] p-[15px] flex justify-between items-start gap-4 hover:shadow-md transition ${
+                  isSelected ? "ring-2 ring-green-500" : ""
                 }`}
               >
-                {/* Select checkbox */}
+                {/* Checkbox to select task */}
                 <input
                   type="checkbox"
                   checked={isSelected}
@@ -188,24 +253,26 @@ export default function TaskPlanner() {
                     setSelectedTaskIds((prev) =>
                       e.target.checked
                         ? [...prev, id]
-                        : prev.filter((taskId) => taskId !== id)
+                        : prev.filter((tid) => tid !== id)
                     );
                   }}
-                  className="accent-red-500 w-5 h-5 mt-1 mr-3"
+                  className="accent-green-600 w-5 h-5 mt-1"
                 />
 
-                {/* Task name + description */}
+                {/* Task info */}
                 <div
-                  className="flex-1"
+                  className="flex-1 cursor-pointer"
                   onClick={() => navigate(`/tasks/${task.id}`)}
                 >
-                  <h4 className="text-base">{task.name}</h4>
+                  <h4 className="font-semibold text-sm text-gray-800 mb-1">
+                    {task.name}
+                  </h4>
                   {task.description && (
-                    <p className="text-sm text-gray-600">{task.description}</p>
+                    <p className="text-sm text-gray-500">{task.description}</p>
                   )}
                 </div>
 
-                {/* Status toggle */}
+                {/* Status checkbox */}
                 <input
                   type="checkbox"
                   checked={task.status === "DONE"}
@@ -214,37 +281,23 @@ export default function TaskPlanner() {
                   }}
                   onClick={(e) => e.stopPropagation()}
                   onChange={() => toggleStatus(task)}
-                  className="accent-blue-600 w-5 h-5 mt-1 ml-2"
-                />
-                {/* priority toggle */}
-                <input
-                  type="checkbox"
-                  checked={task.priority === "HIGH"}
-                  ref={(el) => {
-                    if (el) el.indeterminate = task.priority === "MEDIUM";
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={() => togglePriority(task)}
-                  className="accent-blue-600 w-5 h-5 mt-1 ml-2"
+                  className="accent-blue-600 w-5 h-5 mt-1"
                 />
 
-                {/* Priority toggle — only editable if task.updated === true */}
-                {task.updates ? (
-                  <input
-                    type="checkbox"
-                    checked={task.priority === "HIGH"}
-                    ref={(el) => {
-                      if (el) el.indeterminate = task.priority === "MEDIUM";
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={() => togglePriority(task)}
-                    className="accent-blue-600 w-5 h-5 mt-1 ml-4"
-                  />
-                ) : (
-                  <span className="text-sm font-semibold text-purple-700 mt-1 ml-4">
+                {/* Priority label */}
+                <div className="ml-2 mt-1">
+                  <span
+                    className={`text-xs font-medium px-[8px] py-[4px] rounded-[5px] ${
+                      task.priority === "HIGH"
+                        ? "bg-[#FEE2E2] text-[#b91c1c]"
+                        : task.priority === "MEDIUM"
+                        ? "bg-[#FEF9C3] text-[#A16207]"
+                        : "bg-[#DBEAFE] text-[#1D4ED8]"
+                    }`}
+                  >
                     Priority: {task.priority}
                   </span>
-                )}
+                </div>
               </div>
             );
           })
